@@ -22,7 +22,7 @@
 enoe = function(year = NA, trimestre = NA, integrar = FALSE){
 if (is.na(year) & is.na(trimestre)) {shell.exec("https://www.inegi.org.mx/programas/enoe/15ymas/")}
 # Temp files
-fformat = "dbf"
+fformat = "sav"
 temp.enoe = tempfile()
 zipdir     = tempdir()
 
@@ -30,11 +30,11 @@ zipdir     = tempdir()
 url.base = paste0("http://www.inegi.org.mx/contenidos/programas/enoe/15ymas/microdatos/", year, trimestre,  "_", fformat, ".zip")
 utils::download.file(url.base, temp.enoe)
 utils::unzip(temp.enoe, exdir = zipdir)
-list_dataraw = list.files(zipdir, pattern = ".dbf")
+list_dataraw = list.files(zipdir, pattern = ".sav")
 
-# Read all .dbf files in the folder
+# Read all .sav files in the folder
 for (i in list_dataraw) {
-  Object = foreign::read.dbf(paste0(zipdir,"\\", i), as.is = TRUE)
+  Object = foreign::read.spss(paste0(zipdir,"\\", i), as.is = TRUE)
   assign(paste0("dt.", tools::file_path_sans_ext(i)), Object)
 }
 output = mget(ls(pattern = "dt."))
